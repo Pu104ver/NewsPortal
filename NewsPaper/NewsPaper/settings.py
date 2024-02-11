@@ -1,9 +1,12 @@
+import logging
 import os
 from pathlib import Path
 
+from django.conf import settings
+from django.core.mail import mail_admins
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -12,10 +15,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-nm#n@#e=#!(+a2)l^5&ql8+h7a0y!nw+cqmpj&oduh^=h_s$so'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -88,7 +90,6 @@ AUTHENTICATION_BACKENDS = [
 
 WSGI_APPLICATION = 'NewsPaper.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
@@ -98,6 +99,17 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'postgres',
+#         'USER': 'postgres',
+#         'PASSWORD': 'postgres',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     },
+# }
 
 
 # Password validation
@@ -118,19 +130,134 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': False,
-#     'handlers': {
-#         'console': {
-#             'class': 'logging.StreamHandler',
-#         },
-#     },
-#     'root': {
-#         'handlers': ['console'],
-#         'level': 'INFO',
-#     },
-# }
+# Настройки логирования
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(asctime)s - %(levelname)s - %(module)s - %(message)s'
+        },
+        'warnings': {
+            'format': '%(asctime)s - %(levelname)s - %(module)s - %(pathname)s - %(message)s'
+        },
+        'errors': {
+            'format': '%(asctime)s - %(levelname)s - %(module)s - %(pathname)s -%(message)s\n%(exc_info)s'
+        },
+        'security': {
+            'format': '%(asctime)s - %(levelname)s - %(module)s - %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+            'filters': ['console_filter']
+        },
+        'general_file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'general.log',
+            'formatter': 'verbose',
+            'filters': ['file_filter']
+        },
+        'errors_file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': 'errors.log',
+            'formatter': 'errors',
+            'filters': ['errors_filter']
+        },
+        'security_file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'security.log',
+            'formatter': 'security',
+            'filters': ['security_filter']
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'formatter': 'warnings',
+            'filters': ['mail_filter']
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'general_file'],
+            'level': 'DEBUG' if settings.DEBUG else 'INFO',
+        },
+        'django.request': {
+            'handlers': ['errors_file', 'mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.server': {
+            'handlers': ['errors_file', 'mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.template': {
+            'handlers': ['errors_file'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.db.backends': {
+            'handlers': ['errors_file'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.security': {
+            'handlers': ['security_file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+    'filters': {
+        'console_filter': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+        'file_filter': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+        'errors_filter': {
+            '()': 'logging.Filter',
+        },
+        'security_filter': {
+            '()': 'logging.Filter',
+            'name': 'django.security',
+        },
+        'mail_filter': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': lambda record: True,
+        },
+    },
+}
+
+
+# Настройки отправки почты
+def mail_admins_error(record):
+    print("вызывалось!!!!")
+    if record.levelno >= logging.ERROR:
+        mail_admins(
+            subject='Error on your site',
+            message=record.getMessage(),
+        )
+    return True
+
+
+# Настройки отправки почты
+if not settings.DEBUG:
+    LOGGING['handlers']['mail_admins']['level'] = 'ERROR'
+
+    LOGGING['loggers']['django.request']['handlers'] = ['mail_admins']
+    LOGGING['loggers']['django.server']['handlers'] = ['mail_admins']
+    LOGGING['loggers']['django.template']['handlers'] = ['mail_admins']
+    LOGGING['loggers']['django.db.backends']['handlers'] = ['mail_admins']
+    LOGGING['loggers']['django.security']['handlers'] = ['mail_admins']
+
+    LOGGING['filters']['mail_filter']['callback'] = mail_admins_error
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
@@ -142,7 +269,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
@@ -157,7 +283,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATICFILES_DIRS = [
     BASE_DIR / "static"
 ]
-
 
 SITE_ID = 1
 LOGIN_REDIRECT_URL = "/posts"
@@ -193,3 +318,5 @@ CACHES = {
         'LOCATION': os.path.join(BASE_DIR, 'cache_files')
     }
 }
+
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']

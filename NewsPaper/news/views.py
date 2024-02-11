@@ -135,3 +135,9 @@ def subscriptions(request):
         'subscriptions.html',
         {'categories': categories_with_subscriptions},
     )
+
+
+# Ваш код, где происходит вызов ошибки
+def my_view(request):
+    # Некоторый код...
+    raise ValueError("This is a deliberate error to test logging")

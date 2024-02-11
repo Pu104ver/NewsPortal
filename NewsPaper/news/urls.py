@@ -2,7 +2,7 @@ from django.urls import path
 from django.views.decorators.cache import cache_page
 
 from .views import NewsList, NewsDetail, PostSearchView, NewsCreate, NewsUpdate, NewsDelete, ArticleCreate, \
-    ArticleUpdate, ArticleDelete
+    ArticleUpdate, ArticleDelete, my_view
 
 urlpatterns = [
     path('', cache_page(1*60)(NewsList.as_view()), name='post_list'),
@@ -14,4 +14,5 @@ urlpatterns = [
     path('article/create/', cache_page(5*60)(ArticleCreate.as_view()), name='article_create'),
     path('article/<int:pk>/update/', cache_page(5*60)(ArticleUpdate.as_view()), name='article_update'),
     path('article/<int:pk>/delete/', cache_page(5*60)(ArticleDelete.as_view()), name='article_delete'),
+    path('test-error/', my_view, name='test-error'),
 ]
