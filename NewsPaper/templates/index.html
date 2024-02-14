@@ -1,4 +1,5 @@
-{% load i18n %} <!-- Загружаем теги с переводами, без этой строки ничего не будет работать -->
+{% load i18n %}
+{% load tz %}
 
 <html lang="en">
 <head>
@@ -6,9 +7,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Page title</title>
+
+    <style>
+        body {background-color: {% if current_time.hour >= 19 or current_time.hour <= 7 %} darkcyan {% else %} powderblue {% endif %};}
+    </style>
+
 </head>
 <body>
-    <form action="{% url 'set_language' %}" method="POST"> {% csrf_token %} <!-- Не забываем по csrf_token для POST запросов -->
+    <form action="{% url 'set_language' %}" method="POST"> {% csrf_token %}
         <input type="hidden" name="next" value="{{ redirect_to }}">
         {% get_current_language as LANGUAGE_CODE %}
         <select name="language" id="">
@@ -23,6 +29,34 @@
         </select>
         <input type="submit" value="set">
     </form>
-    {% trans "Check out my new cool translation" %}!
+
+
+    {% get_current_timezone as TIME_ZONE %}
+    <form action="" method="POST">
+        {% csrf_token %}
+        <label for="timezone">Time zone:</label>
+        <select name="timezone">
+            {% for tz in timezones %}
+            <option value="{{ tz }}"{% if tz == TIME_ZONE %} selected{% endif %}>{{ tz }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="Set">
+    </form>
+
+    {{ TIME_ZONE }}
+    {{ current_time|timezone:TIME_ZONE }}
+
+    <br>
+    <br>
+    {% for model in models %}
+    <div class="model-class">
+        {{ model.title }} -
+        {% for category in model.categories.all %}
+        {{ category.name }}
+        {% endfor %}
+
+    </div>
+    {% endfor %}
+
 </body>
 </html>

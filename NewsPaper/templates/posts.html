@@ -7,9 +7,21 @@
 
 {% block title %}
 Posts
+
 {% endblock title %}
 
+
 {% block content %}
+    <style>
+        body {
+        background-color:
+        {% if current_time.hour >= 19 or current_time.hour <= 7 %}
+            white
+        {% else %}
+            white
+        {% endif %};
+        }
+    </style>
     {% load cache %}
 
     {% cache 60 navigation request.LANGUAGE_CODE %}
@@ -20,10 +32,23 @@ Posts
     {% endif %}
 
     <h1>{% trans 'Все статьи' %}</h1>
-
-    <hr>
-
     {% endcache %}
+
+    {% get_current_timezone as TIME_ZONE %}
+    <form action="" method="POST">
+        {% csrf_token %}
+        <label for="timezone">Time zone:</label>
+        <select name="timezone">
+            {% for tz in timezones %}
+            <option value="{{ tz }}"{% if tz == TIME_ZONE %} selected{% endif %}>{{ tz }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="Set">
+    </form>
+    {{ TIME_ZONE }}
+    {{ current_time|timezone:TIME_ZONE }}
+    <br>
+    <br>
 
     {% if posts %}
         <table>

@@ -1,9 +1,11 @@
+import pytz
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db.models import OuterRef, Exists
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.views import View
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
@@ -18,7 +20,7 @@ from django.utils.translation import gettext as _
 
 class NewsList(ListView):
     model = Post
-    ordering = 'title'
+    ordering = '-created_at'
     template_name = 'posts.html'
     context_object_name = 'posts'
     paginate_by = 10
@@ -31,7 +33,14 @@ class NewsList(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filterset'] = self.filterset
+        context['current_time'] = timezone.localtime(timezone.now())
+        context['timezones'] = pytz.common_timezones
         return context
+
+    def post(self, request, *args, **kwargs):
+        request.session['django_timezone'] = request.POST['timezone']
+        return redirect('/posts')
+
 
 
 class NewsDetail(DetailView):
@@ -145,7 +154,18 @@ class Index(View):
     template_name = 'index.html'
 
     def get(self, request, *args, **kwargs):
-        return render(request, self.template_name)
+        models = Post.objects.all()
+
+        context = {
+            'models': models,
+            'current_time': timezone.localtime(timezone.now()),
+            'timezones': pytz.common_timezones
+        }
+        return HttpResponse(render(request, self.template_name, context))
+
+    def post(self, request):
+        request.session['django_timezone'] = request.POST['timezone']
+        return redirect('/')
 
 
 def my_view(request):

@@ -1,13 +1,21 @@
 from django.contrib import admin
+from modeltranslation.admin import TranslationAdmin
 
 from .models import Author, Category, Post, Comment, PostCategory
 
 
+class CategoryAdminTranslation(TranslationAdmin):
+    model = Category
+
+
+class PostAdminTranslation(TranslationAdmin):
+    model = Post
+
+
 class PostAdmin(admin.ModelAdmin):
-    # list_display — это список или кортеж со всеми полями, которые вы хотите видеть в таблице с товарами
-    list_display = 'author', 'post_type', 'get_categories', 'title'  # оставляем только имя и цену товара
-    list_filter = 'categories', 'author',  # добавляем примитивные фильтры в нашу админку
-    search_fields = ('title', 'categories__name')  # тут всё очень похоже на фильтры из запросов в базу
+    list_display = 'author', 'post_type', 'get_categories', 'title'
+    list_filter = 'categories', 'author',
+    search_fields = ('title', 'categories__name')
 
     def get_categories(self, obj):
         return ", ".join([category.name for category in obj.categories.all()])

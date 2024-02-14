@@ -2,7 +2,6 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext as _
-from django.utils.translation import pgettext_lazy
 
 
 class Author(models.Model):
@@ -31,8 +30,8 @@ class Post(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
 
     POST_TYPES = [
-        ('article', 'Article'),
-        ('news', 'News'),
+        ('article', 'Статья'),
+        ('news', 'Новость'),
     ]
     post_type = models.CharField(max_length=10, choices=POST_TYPES)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -40,6 +39,7 @@ class Post(models.Model):
     title = models.CharField(max_length=255)
     content = models.TextField()
     rating = models.IntegerField(default=0)
+
 
     def like(self):
         self.rating += 1
