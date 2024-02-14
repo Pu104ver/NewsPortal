@@ -1,6 +1,8 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
+from django.utils.translation import gettext as _
+from django.utils.translation import pgettext_lazy
 
 
 class Author(models.Model):
@@ -15,11 +17,11 @@ class Author(models.Model):
         self.save()
 
     def __str__(self):
-        return f'{self.user} (рейтинг: {self.rating})'
+        return _(f'{self.user} (рейтинг: {self.rating})')
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=255, unique=True)
+    name = models.CharField(max_length=255, unique=True, help_text=_('category name'))
 
     def __str__(self):
         return f'{self.name}'
@@ -51,7 +53,7 @@ class Post(models.Model):
         return self.content[:124] + '...'
 
     def __str__(self):
-        return f'{self.author}; {self.created_at:%d %B %Y} "{self.title}". Тип: {self.post_type}. {self.preview()}'
+        return _(f'{self.author}; {self.created_at:%d %B %Y} "{self.title}". Тип: {self.post_type}. {self.preview()}')
 
     def get_absolute_url(self):
         return reverse('post_detail', args=[str(self.id)])

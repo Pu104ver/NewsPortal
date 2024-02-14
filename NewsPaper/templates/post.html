@@ -1,5 +1,6 @@
 {% extends 'flatpages/default.html' %}
-
+{% load i18n %}
+{% load tz %}
 {% load custom_filters %}
 
 {% block title %}
@@ -9,9 +10,9 @@ Posts
 {% block content %}
 <h1>
     {{ post.author }}<br>
-    {{ post.created_at|date:"d F Y" }}<br>
+    {{ post.created_at|timezone:"Europe/Moscow"|date:"d F Y H:i" }}<br>
     "{{ post.title|censor }}"<br>
-    Тип: {{ post.post_type|censor }}<br>
+    {% trans 'Тип' %}: {{ post.post_type|censor }}<br>
 </h1>
     {{ post.content|censor }}
 {% endblock content %}

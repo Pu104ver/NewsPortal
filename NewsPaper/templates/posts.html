@@ -1,4 +1,6 @@
 {% extends 'flatpages/default.html' %}
+{% load i18n %}
+{% load tz %}
 
 {% load custom_filters %}
 {% load custom_tags %}
@@ -10,14 +12,14 @@ Posts
 {% block content %}
     {% load cache %}
 
-    {% cache 60 navigation %}
+    {% cache 60 navigation request.LANGUAGE_CODE %}
 
     {% if perms.news.add_post %}
-    <a href="{% url 'news_create' %}">Добавить новость</a>
-    <a href="{% url 'article_create' %}">Добавить статью</a>
+    <a href="{% url 'news_create' %}">{% trans 'Добавить новость' %}</a>
+    <a href="{% url 'article_create' %}">{% trans 'Добавить статью' %}</a>
     {% endif %}
 
-    <h1>Все статьи</h1>
+    <h1>{% trans 'Все статьи' %}</h1>
 
     <hr>
 
@@ -26,36 +28,36 @@ Posts
     {% if posts %}
         <table>
            <tr>
-               <td>Заголовок</td>
-               <td>Создан</td>
-               <td>Содержание</td>
+               <td>{% trans 'Заголовок' %}</td>
+               <td>{% trans 'Создан' %}</td>
+               <td>{% trans 'Содержание' %}</td>
 
                {% if perms.news.change_post or perms.news.delete_post %}
-                <td>Действия</td>
+                <td>{% trans 'Действия' %}</td>
                 {% endif %}
            </tr>
 
            {% for post in posts %}
            <tr>
                <td><a href="{% url 'post_detail' pk=post.id %}">{{ post.title|censor }}</a></td>
-               <td>{{ post.created_at|date:'M d Y H:i' }}</td>
+               <td>{{ post.created_at|timezone:"Europe/Moscow"|date:"d F Y H:i" }}</td>
                <td>{{ post.content|truncatechars:20|censor }}</td>
 
                <td>
                 {% if perms.news.change_post and post.post_type == 'news' %}
-                    <a href="{% url 'news_update' pk=post.id %}">Изменить</a>
+                    <a href="{% url 'news_update' pk=post.id %}">{% trans 'Изменить' %}</a>
                 {% endif %}
 
                 {% if perms.news.delete_post and post.post_type == 'news' %}
-                    <a href="{% url 'news_delete' pk=post.id %}">Удалить</a>
+                    <a href="{% url 'news_delete' pk=post.id %}">{% trans 'Удалить' %}</a>
                 {% endif %}
 
                 {% if perms.news.change_post and post.post_type == 'article' %}
-                    <a href="{% url 'article_update' pk=post.id %}">Изменить</a>
+                    <a href="{% url 'article_update' pk=post.id %}">{% trans 'Изменить' %}</a>
                 {% endif %}
 
                 {% if perms.news.delete_post and post.post_type == 'article' %}
-                    <a href="{% url 'article_delete' pk=post.id %}">Удалить</a>
+                    <a href="{% url 'article_delete' pk=post.id %}">{% trans 'Удалить' %}</a>
                 {% endif %}
                </td>
 
@@ -64,7 +66,7 @@ Posts
 
        </table>
    {% else %}
-       <h2>Статей нет!</h2>
+       <h2>{% trans 'Статей нет!' %}</h2>
    {% endif %}
 
 {# Добавляем пагинацию на страницу #}

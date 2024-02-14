@@ -1,3 +1,5 @@
+{% load i18n %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,12 +12,13 @@
     {% load static %}
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="{% static 'css/styles.css' %}" rel="stylesheet"/>
+
 </head>
 <body>
 <!-- Responsive navbar-->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
     <div class="container">
-        <a class="navbar-brand" href="#">News Portal</a>
+        <a class="navbar-brand" href="/posts">News Portal</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse"
                 data-target="#navbarResponsive"
                 aria-controls="navbarResponsive" aria-expanded="false"
@@ -25,28 +28,55 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" href="/posts/">Posts
-                        <span class="sr-only">(current)</span>
+                    <a class="nav-link" href="/posts/">{% trans 'Посты' %}
                     </a>
                 </li>
 
                 {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="/accounts/logout">{{ user.username }} Выход</a>
+                        <a class="nav-link" href="/accounts/logout">{{ user.username }} {% trans 'Выход' %}</a>
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="/accounts/login">Вход</a>
+                        <a class="nav-link" href="/accounts/login">{% trans 'Вход' %}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/accounts/signup">Регистрация</a>
+                        <a class="nav-link" href="/accounts/signup">{% trans 'Регистрация' %}</a>
                     </li>
                 {% endif %}
 
+                <li class="nav-item active">
+                    <a class="nav-link" href="/subscriptions/">{% trans 'Подписки' %}
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
+
+     <form action="{% url 'set_language' %}" method="POST" style="display: flex; align-items: center;">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ redirect_to }}">
+        {% get_current_language as LANGUAGE_CODE %}
+
+        <div style="margin-right: 10px;">
+            <select name="language" id="">
+                {% get_available_languages as LANGUAGES %}
+                {% get_language_info_list for LANGUAGES as languages %}
+
+                {% for language in languages %}
+                    <option value="{{ language.code }}" {% if language.code == LANGUAGE_CODE %} selected {% endif %}>
+                        {{ language.name_local }} - {{ language.code }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div style="margin-left: auto;">
+            <input type="submit" value="set">
+        </div>
+    </form>
 </nav>
+
 <!-- Page content-->
 <div class="container">
     <div class="row">

@@ -1,0 +1,127 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-02-13 23:52+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: news/models.py:20
+#, python-brace-format
+msgid "{self.user} (рейтинг: {self.rating})"
+msgstr "{self.user} (rating: {self.rating})"
+
+#: news/models.py:24
+msgid "category name"
+msgstr ""
+
+#: news/models.py:56
+msgid ""
+"{self.author}; {self.created_at:%d %B %Y} \"{self.title}\". Тип: {self."
+"post_type}. {self.preview()}"
+msgstr ""
+"{self.author}; {self.created_at:%d %B %Y} \"{self.title}\". Post type: {self."
+"post_type}. {self.preview()}"
+
+#: templates/403.html:5
+msgid "Ошибка 403"
+msgstr "Error 403"
+
+#: templates/account/email/email_confirmation_message.txt:5
+#, python-format
+msgid ""
+"Вы получили это сообщение, потому что пользователь %(user_display)s указал "
+"этот email при регистрации на сайте %(site_domain)s.\n"
+"\n"
+"Для подтверждения регистрации пройдите по ссылке %(activate_url)s\n"
+"\n"
+"Хорошего дня!\n"
+msgstr ""
+
+#: templates/flatpages/default.html:31
+msgid "Посты"
+msgstr "Posts"
+
+#: templates/flatpages/default.html:38
+msgid "Выход"
+msgstr "Log out"
+
+#: templates/flatpages/default.html:42
+msgid "Вход"
+msgstr "Sign on"
+
+#: templates/flatpages/default.html:45
+msgid "Регистрация"
+msgstr "Sign in"
+
+#: templates/flatpages/default.html:50
+msgid "Подписки"
+msgstr "Subscriptions"
+
+#: templates/index.html:26
+msgid "Check out my new cool translation"
+msgstr ""
+
+#: templates/post.html:15
+msgid "Тип"
+msgstr "Post type"
+
+#: templates/posts.html:17
+msgid "Добавить новость"
+msgstr "Add news"
+
+#: templates/posts.html:18
+msgid "Добавить статью"
+msgstr "Add article"
+
+#: templates/posts.html:21
+msgid "Все статьи"
+msgstr "All posts"
+
+#: templates/posts.html:30
+msgid "Заголовок"
+msgstr "Heading"
+
+#: templates/posts.html:31
+msgid "Создан"
+msgstr "Created at"
+
+#: templates/posts.html:32
+msgid "Содержание"
+msgstr "Content"
+
+#: templates/posts.html:35
+msgid "Действия"
+msgstr "Actions"
+
+#: templates/posts.html:47 templates/posts.html:55
+msgid "Изменить"
+msgstr "Edit"
+
+#: templates/posts.html:51 templates/posts.html:59
+msgid "Удалить"
+msgstr "Delete"
+
+#: templates/posts.html:68
+msgid "Статей нет!"
+msgstr "There are no posts!"
+
+#: templates/subscriptions.html:17 templates/subscriptions.html:20
+msgid "Подписаться"
+msgstr "Subscribe"
+
+#: templates/subscriptions.html:18 templates/subscriptions.html:21
+msgid "Отписаться"
+msgstr "Unsubscribe"

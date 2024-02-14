@@ -1,8 +1,10 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.db.models import OuterRef, Exists
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django_filters.views import FilterView
@@ -10,6 +12,8 @@ from django_filters.views import FilterView
 from .filters import PostFilter
 from .forms import NewsForm, ArticleForm
 from .models import Post, Subscriber, Category
+
+from django.utils.translation import gettext as _
 
 
 class NewsList(ListView):
@@ -137,7 +141,13 @@ def subscriptions(request):
     )
 
 
-# Ваш код, где происходит вызов ошибки
+class Index(View):
+    template_name = 'index.html'
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name)
+
+
 def my_view(request):
     # Некоторый код...
     raise ValueError("This is a deliberate error to test logging")
