@@ -10,10 +10,13 @@ from django.views import View
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django_filters.views import FilterView
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from .filters import PostFilter
 from .forms import NewsForm, ArticleForm
 from .models import Post, Subscriber, Category
+from .serializers import *
 
 from django.utils.translation import gettext as _
 
@@ -166,6 +169,24 @@ class Index(View):
     def post(self, request):
         request.session['django_timezone'] = request.POST['timezone']
         return redirect('/')
+
+
+class PostViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+
+    def get_permissions(self):
+        if self.request.user.is_authenticated:
+            return [IsAuthenticated()]
+        else:
+            return [AllowAny()]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        post_type = self.request.query_params.get('post_type', None)
+        if post_type:
+            queryset = queryset.filter(post_type=post_type)
+        return queryset
 
 
 def my_view(request):
