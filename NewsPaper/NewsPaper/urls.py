@@ -6,7 +6,7 @@ from rest_framework.routers import DefaultRouter
 from news.views import subscriptions, my_view, Index, PostViewSet
 
 router = DefaultRouter()
-router.register(r'posts', PostViewSet, basename='posts')
+router.register(r'posts-api', PostViewSet, basename='posts')
 
 urlpatterns = [
    path('i18n/', include('django.conf.urls.i18n')),
