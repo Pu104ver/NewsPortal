@@ -14,6 +14,9 @@
 
 </head>
 <body>
+    <a href=" http://127.0.0.1:8000/posts">К сайту</a>
+    <br>
+    <br>
     <form action="{% url 'set_language' %}" method="POST"> {% csrf_token %}
         <input type="hidden" name="next" value="{{ redirect_to }}">
         {% get_current_language as LANGUAGE_CODE %}

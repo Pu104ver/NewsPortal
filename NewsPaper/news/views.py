@@ -45,7 +45,6 @@ class NewsList(ListView):
         return redirect('/posts')
 
 
-
 class NewsDetail(DetailView):
     model = Post
     template_name = 'post.html'
@@ -180,12 +179,44 @@ class PostViewSet(viewsets.ModelViewSet):
             return [IsAuthenticated()]
         else:
             return [AllowAny()]
+    #
+    # def get_queryset(self):
+    #     queryset = super().get_queryset()
+    #     post_type = self.request.query_params.get('post_type', None)
+    #     if post_type:
+    #         queryset = queryset.filter(post_type=post_type)
+    #     return queryset
+
+
+class NewsViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+
+    def get_permissions(self):
+        if self.request.user.is_authenticated:
+            return [IsAuthenticated()]
+        else:
+            return [AllowAny()]
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        post_type = self.request.query_params.get('post_type', None)
-        if post_type:
-            queryset = queryset.filter(post_type=post_type)
+        queryset = queryset.filter(post_type='news')
+        return queryset
+
+
+class ArticlesViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+
+    def get_permissions(self):
+        if self.request.user.is_authenticated:
+            return [IsAuthenticated()]
+        else:
+            return [AllowAny()]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(post_type='article')
         return queryset
 
 
